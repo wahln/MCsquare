@@ -81,30 +81,48 @@ The MCsquare software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 
 #if VAR_COMPUTE_PRECISION==1
   #define VAR_COMPUTE float
-  #define VLENGTH 16
+    #ifdef __INTEL_COMPILER
+      #define VLENGTH 16
+    #endif
 #else
   #define VAR_COMPUTE double
-  #define VLENGTH 8
+  #ifdef __INTEL_COMPILER
+    #define VLENGTH 8
+  #endif
 #endif
 
-#define vALL 0:VLENGTH
+#ifdef __INTEL_COMPILER
+  #define vALL 1:VLENGTH
+#else
+  #define VLENGTH 1
+  #define vALL 0
+  //We need to overwrite the reduction of the aligned array
+  #define __sec_reduce_add(x) x
+#endif
+//#define vALL 0:VLENGTH
 
 // Cross platform compatibility
 #if defined(_MSC_VER)
+#ifdef __INTEL_COMPILER
   #define ALIGNED_(n) __declspec(align(n))
-  #define M_PI 3.14159265359
   #include <mathimf.h>
+#else
+  #define __assume_aligned(x,y) 
+  #define ALIGNED_(n)
+  #include <math.h>
+#endif
+  #define M_PI 3.14159265359 
   #include <BaseTsd.h>
   typedef SSIZE_T ssize_t;
   #define strtok_r strtok_s
 #else
   #define ALIGNED_(n) __attribute__((aligned(n)))
   #include <math.h>
+#ifndef __INTEL_COMPILER
+#pragma GCC diagnostic ignored "-Wunused-value"
+#define __assume_aligned __builtin_assume_aligned  
 #endif
 
-#ifndef __INTEL_COMPILER
-  #pragma GCC diagnostic ignored "-Wunused-value"
-  #define __assume_aligned __builtin_assume_aligned
 #endif
 
 #endif

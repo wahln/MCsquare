@@ -23,12 +23,19 @@ void Run_simulation(DATA_config *config, Materials *material, DATA_CT *ct, plan_
   time_init = omp_get_wtime();
 
   DATA_Scoring Tot_scoring = Init_Scoring(config, ct->Nbr_voxels, 1);
-
+#ifdef __INTEL_COMPILER
   VAR_SCORING *ptr_energy_scoring[config->Num_Threads];
   VAR_SCORING *ptr_PG_scoring[config->Num_Threads];
   VAR_SCORING *ptr_PG_spectrum[config->Num_Threads];
   VAR_SCORING *ptr_LET_scoring[config->Num_Threads];
   VAR_SCORING *ptr_LET_denominator[config->Num_Threads];
+#else
+  VAR_SCORING **ptr_energy_scoring = (VAR_SCORING **) malloc (config->Num_Threads * sizeof(VAR_SCORING*));
+  VAR_SCORING **ptr_PG_scoring = (VAR_SCORING **) malloc(config->Num_Threads * sizeof(VAR_SCORING*));
+  VAR_SCORING **ptr_PG_spectrum = (VAR_SCORING **) malloc(config->Num_Threads * sizeof(VAR_SCORING*));
+  VAR_SCORING **ptr_LET_scoring = (VAR_SCORING **) malloc(config->Num_Threads * sizeof(VAR_SCORING*));
+  VAR_SCORING **ptr_LET_denominator = (VAR_SCORING **) malloc(config->Num_Threads * sizeof(VAR_SCORING*));
+#endif
 
   // Parallelisation
   #pragma omp parallel shared(config, material, ct, plan, machine, Fields, Nbr_simulated_primaries, time_MC, Tot_scoring, ptr_energy_scoring, ptr_PG_scoring, ptr_PG_spectrum, ptr_LET_scoring, ptr_LET_denominator)
@@ -404,6 +411,12 @@ void Run_simulation(DATA_config *config, Materials *material, DATA_CT *ct, plan_
   // Delete dynamic variables
   Free_Scoring(&Tot_scoring);
 
-
+#ifndef __INTEL_COMPILER
+  if (ptr_energy_scoring != NULL) free(ptr_energy_scoring);
+  if (ptr_PG_scoring != NULL) free(ptr_PG_scoring);
+  if (ptr_PG_spectrum != NULL) free(ptr_PG_spectrum);
+  if (ptr_LET_scoring != NULL) free(ptr_LET_scoring);
+  if (ptr_LET_denominator != NULL) free(ptr_LET_denominator);
+#endif
 
 }

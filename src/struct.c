@@ -187,23 +187,23 @@ void Copy_Hadron_struct(Hadron *destination, Hadron *origin){
   __assume_aligned(&origin->v_Te_max, 64);
 
 
-  destination->v_x[:] = origin->v_x[:];
-  destination->v_y[:] = origin->v_y[:];
-  destination->v_z[:] = origin->v_z[:];
+  destination->v_x[vALL] = origin->v_x[vALL];
+  destination->v_y[vALL] = origin->v_y[vALL];
+  destination->v_z[vALL] = origin->v_z[vALL];
 
-  destination->v_u[:] = origin->v_u[:];
-  destination->v_v[:] = origin->v_v[:];
-  destination->v_w[:] = origin->v_w[:];
+  destination->v_u[vALL] = origin->v_u[vALL];
+  destination->v_v[vALL] = origin->v_v[vALL];
+  destination->v_w[vALL] = origin->v_w[vALL];
 
-  destination->v_T[:] = origin->v_T[:];
-  destination->v_M[:] = origin->v_M[:];
-  destination->v_charge[:] = origin->v_charge[:];
-  destination->v_mass[:] = origin->v_mass[:];
+  destination->v_T[vALL] = origin->v_T[vALL];
+  destination->v_M[vALL] = origin->v_M[vALL];
+  destination->v_charge[vALL] = origin->v_charge[vALL];
+  destination->v_mass[vALL] = origin->v_mass[vALL];
 
-  destination->v_type[:] = origin->v_type[:];
+  destination->v_type[vALL] = origin->v_type[vALL];
 
-  destination->v_E[:] = origin->v_E[:];
-  destination->v_gamma[:] = origin->v_gamma[:];
-  destination->v_beta2[:] = origin->v_beta2[:];
-  destination->v_Te_max[:] = origin->v_Te_max[:];
+  destination->v_E[vALL] = origin->v_E[vALL];
+  destination->v_gamma[vALL] = origin->v_gamma[vALL];
+  destination->v_beta2[vALL] = origin->v_beta2[vALL];
+  destination->v_Te_max[vALL] = origin->v_Te_max[vALL];
 }
